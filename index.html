@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cuaderno de Costos</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap');
+
+:root{
+  --ink:#23262B;
+  --ink-soft:#6B6F76;
+  --red:#E4483A;
+  --red-dark:#C6392D;
+  --red-tint:#FBE1DC;
+  --navy:#2B3142;
+  --navy-tint:#E7E9F0;
+  --gold:#E3A23C;
+  --gold-dark:#B87F22;
+  --gold-tint:#FBEDD7;
+  --green:#4C8C63;
+  --green-tint:#E1EFE6;
+  --card:#FFFFFF;
+  --border:#F0DED9;
+  --radius:16px;
+  --shadow:0 10px 28px rgba(196,70,50,.09);
+}
+
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  min-height:100vh;
+  color:var(--ink);
+  font-family:'Inter', sans-serif;
+  padding: 30px 18px 60px;
+  background:
+    radial-gradient(circle at 88% 6%, rgba(228,72,58,.10), transparent 40%),
+    radial-gradient(circle at 6% 90%, rgba(227,162,60,.14), transparent 45%),
+    linear-gradient(150deg, #FFF8F1 0%, #FDECE3 45%, #FCE0DE 100%);
+  background-attachment: fixed;
+}
+
+.wrap{max-width:980px; margin:0 auto;}
+
+/* HEADER */
+header.top{
+  position:relative;
+  background: var(--card);
+  border-radius: 22px;
+  padding: 26px 34px 60px;
+  box-shadow: var(--shadow);
+  overflow:hidden;
+}
+header.top .brand{display:flex; align-items:center; gap:12px; margin-bottom:22px;}
+.logo-mark{width:38px; height:38px; flex-shrink:0;}
+.brand-word{font-family:'Poppins'; font-weight:700; font-size:19px; color:var(--navy); letter-spacing:.01em;}
+.brand-word span{color:var(--red);}
+
+header.top .head-row{display:flex; justify-content:space-between; align-items:flex-end; gap:20px; flex-wrap:wrap;}
+header.top .eyebrow{
+  font-family:'IBM Plex Mono', monospace;
+  font-size:11.5px; letter-spacing:.16em; text-transform:uppercase;
+  color: var(--red); font-weight:600; margin-bottom:8px;
+}
+header.top h1{
+  font-family:'Poppins', sans-serif; font-weight:600; letter-spacing:.03em;
+  font-size: clamp(24px, 3.6vw, 32px); margin:0; line-height:1.15; color:var(--ink);
+}
+header.top p{margin:10px 0 0; color:var(--ink-soft); font-size:14.5px; max-width:48ch;}
+header.top .actions{display:flex; gap:8px; flex-wrap:wrap;}
+.btn-ghost{
+  background:var(--navy-tint); border:1px solid #D9DCE8;
+  color:var(--navy); font-family:'Inter'; font-size:12.5px; font-weight:600;
+  padding:9px 14px; border-radius:9px; cursor:pointer; white-space:nowrap;
+}
+.btn-ghost:hover{background:#DCDFEC;}
+
+.wave{
+  position:absolute; left:0; right:0; bottom:-2px; height:70px;
+  background: radial-gradient(120% 100% at 15% 0%, rgba(228,72,58,.10), transparent 60%),
+              radial-gradient(120% 100% at 85% 0%, rgba(227,162,60,.16), transparent 60%);
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+}
+
+/* TABS */
+nav.tabs{display:flex; gap:6px; margin-top:22px; padding:0 6px; overflow-x:auto;}
+.tab-btn{
+  font-family:'Inter'; font-weight:600; font-size:13.8px;
+  border:none; cursor:pointer; padding:12px 16px 14px;
+  border-radius: 12px 12px 0 0;
+  background: #F3E4DF; color: var(--ink-soft);
+  position:relative; top:2px; transition: all .15s ease;
+  white-space:nowrap; border-top:3px solid transparent;
+}
+.tab-btn .num{
+  display:inline-block; font-family:'IBM Plex Mono'; font-size:11px;
+  opacity:.6; margin-right:5px;
+}
+.tab-btn.active{
+  background: var(--card); color: var(--ink); top:0;
+  box-shadow: 0 -3px 10px rgba(196,70,50,.06);
+}
+.tab-btn[data-tab="inicio"].active{border-top-color: var(--ink-soft);}
+.tab-btn[data-tab="fijos"].active{border-top-color: var(--navy);}
+.tab-btn[data-tab="variables"].active{border-top-color: var(--red);}
+.tab-btn[data-tab="precio"].active{border-top-color: var(--gold-dark);}
+.tab-btn[data-tab="ajuste"].active{border-top-color: var(--red-dark);}
+.tab-btn[data-tab="resumen"].active{border-top-color: var(--green);}
+
+/* CARD */
+main.card{
+  background: var(--card);
+  border-radius: 0 18px 18px 18px;
+  box-shadow: var(--shadow);
+  padding: 32px 34px 38px;
+  min-height: 420px;
+}
+@media(max-width:640px){
+  main.card{padding:22px 18px 28px;}
+  header.top{padding:22px 20px 50px;}
+}
+
+section.tab-panel{display:none;}
+section.tab-panel.active{display:block; animation: fade .25s ease;}
+@keyframes fade{from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:none;}}
+
+h2.section-title{
+  font-family:'Poppins', sans-serif; font-weight:600; font-size:22px; margin:0 0 4px;
+  display:flex; align-items:center; gap:10px; letter-spacing:.01em;
+}
+p.section-sub{color:var(--ink-soft); font-size:14.5px; margin:0 0 22px; max-width:62ch;}
+
+.info-btn{
+  width:20px; height:20px; border-radius:50%; border:1.5px solid var(--ink-soft);
+  background:none; color:var(--ink-soft); font-family:'IBM Plex Mono'; font-size:12px;
+  font-weight:600; cursor:pointer; line-height:1; display:inline-flex; align-items:center; justify-content:center;
+  flex-shrink:0;
+}
+.info-btn:hover{border-color:var(--red); color:var(--red);}
+.info-box{
+  display:none; background:var(--gold-tint); border:1px solid #F0DBAE;
+  border-radius:10px; padding:12px 16px; font-size:13.8px; color:#6B4E12;
+  margin: -8px 0 20px; line-height:1.5;
+}
+.info-box.show{display:block;}
+
+/* INICIO */
+.concept-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0 24px;}
+@media(max-width:640px){.concept-grid{grid-template-columns:1fr;}}
+.concept-card{border-radius:14px; padding:18px 20px; border:1px solid var(--border);}
+.concept-card.fijo{background:var(--navy-tint); border-color:#D9DCE8;}
+.concept-card.variable{background:var(--red-tint); border-color:#F2C7BE;}
+.concept-card h3{font-family:'Poppins'; font-size:16.5px; margin:0 0 6px; font-weight:600;}
+.concept-card.fijo h3{color:var(--navy);}
+.concept-card.variable h3{color:var(--red-dark);}
+.concept-card p{margin:0; font-size:13.8px; line-height:1.55; color:var(--ink-soft);}
+.concept-card .example{
+  margin-top:10px; font-family:'IBM Plex Mono'; font-size:12px;
+  padding:6px 10px; border-radius:6px; display:inline-block;
+}
+.concept-card.fijo .example{background:#D9DCE8; color:var(--navy);}
+.concept-card.variable .example{background:#F2C7BE; color:var(--red-dark);}
+
+.steps-mini{display:flex; gap:10px; flex-wrap:wrap; margin:18px 0 8px;}
+.step-pill{
+  flex:1; min-width:130px; background:#FBF4EF; border:1px solid var(--border);
+  border-radius:12px; padding:12px 14px; font-size:13px;
+}
+.step-pill b{display:block; font-family:'Poppins'; font-size:14.5px; margin-bottom:2px; font-weight:600;}
+
+.cta-row{margin-top:26px;}
+.btn-primary{
+  background:var(--red); color:#fff; border:none; font-family:'Inter'; font-weight:700;
+  font-size:14.5px; padding:13px 22px; border-radius:11px; cursor:pointer;
+}
+.btn-primary:hover{background:var(--red-dark);}
+
+/* TABLES / ROWS */
+.row-table{width:100%; border-collapse:collapse; margin-bottom:6px;}
+.row-table th{
+  text-align:left; font-family:'IBM Plex Mono'; font-size:11px; text-transform:uppercase;
+  letter-spacing:.06em; color:var(--ink-soft); font-weight:600; padding:0 10px 8px;
+}
+.row-table td{padding:5px 10px 5px 0; vertical-align:middle;}
+.row-table input[type=text]{
+  width:100%; border:1px solid var(--border); background:#fff; border-radius:9px;
+  padding:10px 12px; font-family:'Inter'; font-size:14px; color:var(--ink);
+}
+.row-table input[type=number]{
+  width:100%; border:1px solid var(--border); background:#fff; border-radius:9px;
+  padding:10px 12px; font-family:'IBM Plex Mono'; font-size:14px; color:var(--ink); text-align:right;
+}
+.row-table input:focus{outline:2px solid var(--red); outline-offset:1px; border-color:var(--red);}
+.amt-col{width:150px;}
+.del-col{width:36px;}
+.del-btn{
+  width:30px; height:30px; border-radius:8px; border:1px solid var(--border); background:#fff;
+  color:var(--red); font-size:16px; cursor:pointer; line-height:1;
+}
+.del-btn:hover{background:var(--red-tint); border-color:var(--red);}
+
+.add-row-btn{
+  margin-top:8px; background:none; border:1.5px dashed var(--ink-soft); color:var(--ink-soft);
+  font-family:'Inter'; font-weight:600; font-size:13.5px; padding:9px 16px; border-radius:10px;
+  cursor:pointer; width:100%; text-align:center;
+}
+.add-row-btn:hover{border-color:var(--red); color:var(--red-dark); background:var(--red-tint);}
+
+.chips{display:flex; flex-wrap:wrap; gap:7px; margin:2px 0 16px;}
+.chip{
+  background:#FBF4EF; border:1px solid var(--border); color:var(--ink-soft);
+  font-family:'Inter'; font-size:12.5px; font-weight:600; padding:7px 13px;
+  border-radius:20px; cursor:pointer;
+}
+.chip:hover{background:var(--gold-tint); border-color:#F0DBAE; color:var(--gold-dark);}
+.chips-label{font-family:'IBM Plex Mono'; font-size:10.5px; text-transform:uppercase; letter-spacing:.06em; color:var(--ink-soft); margin:0 0 8px;}
+
+.total-bar{
+  margin-top:20px; display:flex; justify-content:space-between; align-items:center;
+  background:var(--navy); color:#fff; border-radius:14px; padding:16px 22px;
+}
+.total-bar .label{font-size:12.5px; color:#C7CBDD; font-weight:600; text-transform:uppercase; letter-spacing:.05em; font-family:'IBM Plex Mono';}
+.total-bar .value{font-family:'Poppins'; font-size:25px; font-weight:600;}
+
+/* PRODUCTS (variables tab) */
+.product-card{
+  border:1px solid var(--border); border-radius:14px; padding:20px 22px; margin-bottom:18px;
+  background:#fff;
+}
+.product-card .p-head{display:flex; align-items:center; gap:10px; margin-bottom:10px;}
+.product-card .p-head input[type=text]{
+  font-family:'Poppins'; font-size:17px; font-weight:600; border:none; border-bottom:2px solid var(--border);
+  padding:4px 2px; flex:1; background:transparent; color:var(--ink);
+}
+.product-card .p-head input[type=text]:focus{outline:none; border-color:var(--red);}
+.subtotal-line{
+  display:flex; justify-content:space-between; margin-top:10px; padding-top:10px;
+  border-top:1px dashed var(--border); font-size:14px;
+}
+.subtotal-line b{font-family:'IBM Plex Mono'; font-size:16px; color:var(--red-dark);}
+.remove-product{
+  background:none; border:1px solid var(--border); color:var(--red); border-radius:8px;
+  padding:6px 10px; font-size:12px; font-family:'Inter'; font-weight:600; cursor:pointer;
+}
+.remove-product:hover{background:var(--red-tint); border-color:var(--red);}
+
+.add-product-btn{
+  background:var(--red); color:#fff; border:none; font-family:'Inter'; font-weight:700;
+  font-size:13.5px; padding:11px 18px; border-radius:10px; cursor:pointer; margin-bottom:18px;
+}
+.add-product-btn:hover{background:var(--red-dark);}
+
+/* PRECIO tab */
+.price-card{border:1px solid var(--border); border-radius:14px; padding:22px; margin-bottom:20px; background:#fff;}
+.price-card h3{font-family:'Poppins'; font-size:18px; margin:0 0 16px; color:var(--gold-dark); font-weight:600;}
+.price-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin-bottom:16px;}
+.field{display:flex; flex-direction:column; gap:5px;}
+.field label{font-family:'IBM Plex Mono'; font-size:10.5px; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft);}
+.field input{
+  border:1px solid var(--border); border-radius:9px; padding:10px 12px; font-family:'IBM Plex Mono';
+  font-size:15px; text-align:right; background:#fff;
+}
+.field.readout input{background:#FBF6F2; color:var(--ink-soft); font-weight:600;}
+.field.highlight input{border-color:var(--gold); background:var(--gold-tint); font-weight:700; color:var(--gold-dark);}
+.field input:focus{outline:2px solid var(--gold); outline-offset:1px;}
+
+.bar-chart{display:flex; height:26px; border-radius:8px; overflow:hidden; margin-top:6px; border:1px solid var(--border);}
+.bar-seg{display:flex; align-items:center; justify-content:center; font-size:10.5px; color:#fff; font-weight:700; font-family:'IBM Plex Mono'; white-space:nowrap; overflow:hidden;}
+.bar-seg.var{background:var(--red);}
+.bar-seg.fijo{background:var(--navy);}
+.bar-seg.gan{background:var(--green);}
+.bar-legend{display:flex; gap:14px; margin-top:8px; font-size:11.5px; color:var(--ink-soft); flex-wrap:wrap;}
+.bar-legend span{display:flex; align-items:center; gap:5px;}
+.dot{width:9px; height:9px; border-radius:3px; display:inline-block;}
+.dot.var{background:var(--red);} .dot.fijo{background:var(--navy);} .dot.gan{background:var(--green);}
+
+.warn{background:var(--red-tint); color:#7A2534; border:1px solid #F0C0B8; border-radius:9px; padding:9px 12px; font-size:13px; margin-top:10px;}
+
+/* AJUSTE tab */
+.ajuste-block{border:1px solid var(--border); border-radius:14px; padding:20px 22px; margin-bottom:18px; background:#fff;}
+.ajuste-block h3{font-family:'Poppins'; font-size:16.5px; margin:0 0 4px; font-weight:600; color:var(--navy);}
+.ajuste-block h3.v{color:var(--red-dark);}
+.ajuste-block p.mini{font-size:13px; color:var(--ink-soft); margin:0 0 14px;}
+.adj-table{width:100%; border-collapse:collapse; font-size:13.3px;}
+.adj-table th{
+  text-align:right; font-family:'IBM Plex Mono'; font-size:10px; text-transform:uppercase;
+  letter-spacing:.05em; color:var(--ink-soft); font-weight:600; padding:0 8px 8px; white-space:nowrap;
+}
+.adj-table th:first-child{text-align:left;}
+.adj-table td{padding:7px 8px; border-top:1px solid var(--border); text-align:right; vertical-align:middle;}
+.adj-table td:first-child{text-align:left; font-weight:500;}
+.adj-table input[type=number]{
+  width:100px; border:1px solid var(--border); border-radius:8px; padding:7px 9px;
+  font-family:'IBM Plex Mono'; font-size:13px; text-align:right;
+}
+.adj-table input:focus{outline:2px solid var(--red); outline-offset:1px;}
+.adj-result{
+  margin-top:14px; display:flex; justify-content:space-between; align-items:center;
+  background:#FBF4EF; border-radius:10px; padding:12px 16px;
+}
+.adj-result .l{font-family:'IBM Plex Mono'; font-size:11px; text-transform:uppercase; color:var(--ink-soft);}
+.adj-result .v{font-family:'Poppins'; font-size:20px; font-weight:600;}
+
+.impact-summary{border:1px solid var(--border); border-radius:14px; padding:20px 22px; margin-top:6px; background:linear-gradient(135deg,#FFF8F1,#FDECE3);}
+.impact-row{display:flex; justify-content:space-between; align-items:center; padding:12px 0; border-bottom:1px dashed var(--border);}
+.impact-row:last-child{border-bottom:none;}
+.impact-row .pname{font-family:'Poppins'; font-weight:600; font-size:15px;}
+.impact-row .pct{font-family:'IBM Plex Mono'; font-size:18px; font-weight:600;}
+.badge{padding:4px 11px; border-radius:20px; font-size:11.5px; font-weight:700; display:inline-block;}
+.badge.ok{background:var(--green-tint); color:var(--green);}
+.badge.bad{background:var(--red-tint); color:var(--red-dark);}
+.badge.warn2{background:var(--gold-tint); color:var(--gold-dark);}
+.reset-sim{background:none; border:1px solid var(--border); color:var(--ink-soft); font-family:'Inter'; font-weight:600; font-size:12.5px; padding:8px 14px; border-radius:9px; cursor:pointer; margin-bottom:16px;}
+.reset-sim:hover{border-color:var(--red); color:var(--red-dark);}
+
+/* RESUMEN */
+.summary-table{width:100%; border-collapse:collapse; margin-top:14px;}
+.summary-table th{
+  text-align:left; font-family:'IBM Plex Mono'; font-size:10.5px; text-transform:uppercase;
+  color:var(--ink-soft); padding:8px 10px; border-bottom:2px solid var(--border);
+}
+.summary-table td{padding:12px 10px; border-bottom:1px solid var(--border); font-size:14px; vertical-align:middle;}
+.summary-table td.mono{font-family:'IBM Plex Mono';}
+.equil-bar{width:110px; height:9px; background:var(--border); border-radius:5px; overflow:hidden; position:relative;}
+.equil-fill{height:100%; border-radius:5px;}
+
+.grand-totals{display:flex; gap:14px; margin-top:24px; flex-wrap:wrap;}
+.gt-card{flex:1; min-width:170px; border-radius:14px; padding:16px 18px;}
+.gt-card.f1{background:var(--navy); color:#fff;}
+.gt-card.f2{background:var(--green); color:#fff;}
+.gt-card .l{font-family:'IBM Plex Mono'; font-size:10.5px; text-transform:uppercase; letter-spacing:.05em; opacity:.85;}
+.gt-card .v{font-family:'Poppins'; font-size:23px; font-weight:600; margin-top:4px;}
+
+.export-btn{
+  margin-top:22px; background:none; border:1.5px solid var(--red); color:var(--red-dark);
+  font-family:'Inter'; font-weight:700; font-size:13.5px; padding:10px 18px; border-radius:10px; cursor:pointer;
+}
+.export-btn:hover{background:var(--red); color:#fff;}
+
+.empty-msg{color:var(--ink-soft); font-size:14px; padding:20px; text-align:center; background:#FBF4EF; border-radius:12px;}
+
+.privacy-note{
+  display:flex; gap:10px; align-items:flex-start; background:var(--green-tint); border:1px solid #CBE3D2;
+  color:#2F5A40; border-radius:12px; padding:12px 16px; font-size:12.8px; line-height:1.5; margin-top:24px;
+}
+
+footer.credit{text-align:center; font-size:12px; color:var(--ink-soft); margin-top:18px; opacity:.75;}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="top">
+    <div class="brand">
+      <svg class="logo-mark" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="20" cy="20" r="20" fill="#E4483A"/>
+        <rect x="11" y="12" width="18" height="3.4" rx="1.7" fill="#fff"/>
+        <rect x="11" y="18.3" width="13" height="3.4" rx="1.7" fill="#fff"/>
+        <rect x="11" y="24.6" width="9" height="3.4" rx="1.7" fill="#fff"/>
+      </svg>
+      <div class="brand-word">Cuaderno de <span>Costos</span></div>
+    </div>
+    <div class="head-row">
+      <div>
+        <div class="eyebrow">Módulo de costos</div>
+        <h1>Descubrí cuánto cuesta lo que hacés</h1>
+        <p>Una guía paso a paso para calcular tus costos y definir a qué precio conviene vender.</p>
+      </div>
+      <div class="actions">
+        <button class="btn-ghost" onclick="loadExample()">↺ Ejemplo</button>
+        <button class="btn-ghost" onclick="clearAll()">🗑 Vaciar todo</button>
+      </div>
+    </div>
+    <div class="wave"></div>
+  </header>
+
+  <nav class="tabs" id="tabsNav"></nav>
+  <main class="card">
+
+    <section class="tab-panel" id="panel-inicio">
+      <h2 class="section-title">¿Cómo se arma el costo de un producto?</h2>
+      <p class="section-sub">Antes de cargar números, repasemos dos ideas clave. Todo lo demás sale de acá.</p>
+
+      <div class="concept-grid">
+        <div class="concept-card fijo">
+          <h3>Costos fijos</h3>
+          <p>Los pagás todos los meses, vendas mucho, poco o nada. No dependen de cuánto producís.</p>
+          <span class="example">Ej: alquiler, sueldos, internet</span>
+        </div>
+        <div class="concept-card variable">
+          <h3>Costos variables</h3>
+          <p>Aparecen solo cuando producís una unidad más. Si no producís, no los gastás.</p>
+          <span class="example">Ej: materia prima, envases</span>
+        </div>
+      </div>
+
+      <div class="steps-mini">
+        <div class="step-pill"><b>1. Fijos</b>Sumamos lo que pagás por mes, sin importar las ventas.</div>
+        <div class="step-pill"><b>2. Variables</b>Sumamos lo que cuesta cada unidad que producís.</div>
+        <div class="step-pill"><b>3. Precio</b>Repartimos los fijos entre las unidades y definimos el margen.</div>
+        <div class="step-pill"><b>4. Resumen</b>Vemos cuánto hay que vender para no perder plata.</div>
+      </div>
+
+      <div class="cta-row">
+        <button class="btn-primary" onclick="goTab('fijos')">Empezar por los costos fijos →</button>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="panel-fijos">
+      <h2 class="section-title">Costos fijos mensuales
+        <button class="info-btn" onclick="toggleInfo('info-fijos')">i</button>
+      </h2>
+      <p class="section-sub">Cargá todo lo que pagás en el mes independientemente de cuánto vendas.</p>
+      <div class="info-box" id="info-fijos">Si tenés dudas de si algo es fijo o variable, preguntate: "¿lo sigo pagando aunque no venda nada este mes?" Si la respuesta es sí, es un costo fijo.</div>
+
+      <p class="chips-label">Agregar rápido</p>
+      <div class="chips" id="fixedChips"></div>
+
+      <table class="row-table">
+        <thead><tr><th>Concepto</th><th class="amt-col">Monto mensual</th><th class="del-col"></th></tr></thead>
+        <tbody id="fixedRows"></tbody>
+      </table>
+      <button class="add-row-btn" onclick="addFixedRow()">+ Agregar costo fijo</button>
+
+      <div class="total-bar">
+        <span class="label">Total costos fijos / mes</span>
+        <span class="value" id="fixedTotalDisplay">$ 0</span>
+      </div>
+    </section>
+
+    <section class="tab-panel" id="panel-variables">
+      <h2 class="section-title">Costos variables por producto
+        <button class="info-btn" onclick="toggleInfo('info-var')">i</button>
+      </h2>
+      <p class="section-sub">Para cada producto que vendés, sumá lo que cuesta hacer <b>una sola unidad</b>.</p>
+      <div class="info-box" id="info-var">Pensalo por unidad: si hacés una torta, ¿cuánta harina, huevos y caja usás para ESA torta? Ese es el costo variable unitario.</div>
+
+      <button class="add-product-btn" onclick="addProduct()">+ Agregar producto</button>
+      <div id="productsVarList"></div>
+    </section>
+
+    <section class="tab-panel" id="panel-precio">
+      <h2 class="section-title">Precio y margen
+        <button class="info-btn" onclick="toggleInfo('info-precio')">i</button>
+      </h2>
+      <p class="section-sub">Estimá cuánto pensás vender de cada producto para repartir los costos fijos, y definí tu margen.</p>
+      <div class="info-box" id="info-precio">El costo fijo se reparte entre productos según cuánto estimás vender de cada uno. Si vendés menos unidades de las que pusiste acá, cada unidad "carga" con más costo fijo del real — por eso conviene ser realista con la estimación.</div>
+      <div id="productsPrecioList"></div>
+    </section>
+
+    <section class="tab-panel" id="panel-ajuste">
+      <h2 class="section-title">¿Te subieron los costos?
+        <button class="info-btn" onclick="toggleInfo('info-ajuste')">i</button>
+      </h2>
+      <p class="section-sub">Simulá cuánto subió cada costo y mirá cuánto deberías ajustar tus precios para no perder margen.</p>
+      <div class="info-box" id="info-ajuste">Cargá al lado de cada costo lo que pagás <b>ahora</b>. La herramienta calcula qué porcentaje representa cada costo sobre el total y, con eso, cuánto tendrías que subir el precio de cada producto para mantener la misma ganancia.</div>
+      <button class="reset-sim" onclick="resetAjuste()">↺ Reiniciar simulación</button>
+      <div id="ajusteContent"></div>
+    </section>
+
+    <section class="tab-panel" id="panel-resumen">
+      <h2 class="section-title">Resumen y punto de equilibrio
+        <button class="info-btn" onclick="toggleInfo('info-resumen')">i</button>
+      </h2>
+      <p class="section-sub">El punto de equilibrio es la cantidad de unidades que necesitás vender para cubrir los costos — ni ganar ni perder.</p>
+      <div class="info-box" id="info-resumen">Si tu estimación de ventas está por debajo del punto de equilibrio, ese producto está perdiendo plata todavía. Cuanto más lejos por encima, mejor.</div>
+      <div id="summaryContent"></div>
+      <button class="export-btn" onclick="exportCSV()">⬇ Descargar resumen (CSV)</button>
+      <div class="privacy-note">🔒 Los datos que cargás quedan solo en esta pestaña de tu navegador — no se guardan ni se envían a ningún lado. Al cerrar o recargar la página, se pierden.</div>
+    </section>
+
+  </main>
+
+  <footer class="credit">Herramienta pedagógica de cálculo de costos · CGdata</footer>
+</div>
+
+<script>
+/* ---------- STATE ---------- */
+let state = { fixed: [], products: [] };
+let nextFixedId = 1, nextProductId = 1;
+let currentTab = 'inicio';
+
+const TABS = [
+  {id:'inicio', num:'', label:'Cómo funciona'},
+  {id:'fijos', num:'1', label:'Costos fijos'},
+  {id:'variables', num:'2', label:'Costos variables'},
+  {id:'precio', num:'3', label:'Precio y margen'},
+  {id:'ajuste', num:'', label:'¿Subieron tus costos?'},
+  {id:'resumen', num:'4', label:'Resumen'},
+];
+
+const FIXED_SUGGESTIONS = ['Alquiler','Sueldos','Luz','Gas','Agua','Internet','Seguro','Monotributo / Impuestos'];
+const VAR_SUGGESTIONS = ['Materia prima','Envase / packaging','Mano de obra directa','Comisión de venta','Flete / envío','Insumos varios'];
+
+function loadExample(){
+  nextFixedId = 1; nextProductId = 1;
+  state = {
+    fixed: [
+      {id:nextFixedId++, concepto:'Alquiler', monto:80000},
+      {id:nextFixedId++, concepto:'Sueldos', monto:150000},
+      {id:nextFixedId++, concepto:'Servicios (luz, gas, internet)', monto:25000},
+    ],
+    products: [
+      {id:nextProductId++, nombre:'Producto A', unidades:100, margen:30, nextVarId:3,
+       variable:[{id:1, concepto:'Materia prima', monto:200},{id:2, concepto:'Envase / packaging', monto:30}]}
+    ]
+  };
+  render();
+}
+function clearAll(){
+  nextFixedId = 1; nextProductId = 1;
+  state = { fixed: [], products: [] };
+  render();
+}
+
+/* ---------- HELPERS ---------- */
+function fmt(n){
+  n = isFinite(n) ? n : 0;
+  return '$ ' + Math.round(n).toLocaleString('es-AR');
+}
+function fmt2(n){
+  n = isFinite(n) ? n : 0;
+  return n.toLocaleString('es-AR', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function pct(n){
+  n = isFinite(n) ? n : 0;
+  return (n>=0?'+':'') + n.toFixed(1) + '%';
+}
+function toggleInfo(id){ document.getElementById(id).classList.toggle('show'); }
+
+function fixedTotal(){ return state.fixed.reduce((s,r)=>s+(Number(r.monto)||0),0); }
+function productVarTotal(p){ return p.variable.reduce((s,r)=>s+(Number(r.monto)||0),0); }
+function totalEstimatedUnits(){ return state.products.reduce((s,p)=>s+(Number(p.unidades)||0),0); }
+function productFixedShare(p){
+  const totalUnits = totalEstimatedUnits();
+  if(totalUnits<=0) return 0;
+  return fixedTotal() * ((Number(p.unidades)||0) / totalUnits);
+}
+function productUnitCost(p){
+  const u = Number(p.unidades)||0;
+  const share = productFixedShare(p);
+  const fixedPerUnit = u>0 ? share/u : 0;
+  return productVarTotal(p) + fixedPerUnit;
+}
+function productBreakeven(p){
+  const price = Number(p.precio)||0;
+  const varCost = productVarTotal(p);
+  const share = productFixedShare(p);
+  if(price - varCost <= 0) return Infinity;
+  return share / (price - varCost);
+}
+
+/* ---------- TABS NAV ---------- */
+function renderTabsNav(){
+  const nav = document.getElementById('tabsNav');
+  nav.innerHTML = TABS.map(t => `
+    <button class="tab-btn ${t.id===currentTab?'active':''}" data-tab="${t.id}" onclick="goTab('${t.id}')">
+      ${t.num?`<span class="num">${t.num}</span>`:''}${t.label}
+    </button>`).join('');
+}
+function goTab(id){
+  currentTab = id;
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+id).classList.add('active');
+  renderTabsNav();
+  if(id==='resumen') renderSummary();
+  if(id==='ajuste') renderAjuste();
+}
+
+/* ---------- FIXED ROWS ---------- */
+function renderFixedChips(){
+  document.getElementById('fixedChips').innerHTML = FIXED_SUGGESTIONS.map(s=>
+    `<button type="button" class="chip" onclick="addFixedRow('${s.replace(/'/g,"\\'")}')">+ ${s}</button>`).join('');
+}
+function addFixedRow(concepto){
+  state.fixed.push({id:nextFixedId++, concepto:concepto||'', monto:0});
+  renderFixed();
+}
+function removeFixedRow(id){
+  state.fixed = state.fixed.filter(r=>r.id!==id);
+  renderFixed();
+  renderPrecioProducts();
+}
+function renderFixed(){
+  const tbody = document.getElementById('fixedRows');
+  tbody.innerHTML = state.fixed.map(r=>`
+    <tr>
+      <td><input type="text" value="${escapeHtml(r.concepto)}" oninput="state.fixed.find(x=>x.id===${r.id}).concepto=this.value"></td>
+      <td class="amt-col"><input type="number" value="${r.monto}" oninput="state.fixed.find(x=>x.id===${r.id}).monto=parseFloat(this.value)||0; updateFixedTotal();"></td>
+      <td class="del-col"><button class="del-btn" onclick="removeFixedRow(${r.id})">×</button></td>
+    </tr>`).join('') || `<tr><td colspan="3" style="padding:16px 0;"><div class="empty-msg">Todavía no cargaste costos fijos.</div></td></tr>`;
+  updateFixedTotal();
+}
+function updateFixedTotal(){
+  document.getElementById('fixedTotalDisplay').textContent = fmt(fixedTotal());
+  updateAllProductsDerived();
+}
+
+/* ---------- PRODUCTS: VARIABLES TAB ---------- */
+function addProduct(){
+  state.products.push({id:nextProductId++, nombre:'Producto nuevo', unidades:0, margen:30, variable:[], nextVarId:1});
+  renderVarProducts();
+  renderPrecioProducts();
+}
+function removeProduct(pid){
+  state.products = state.products.filter(p=>p.id!==pid);
+  renderVarProducts();
+  renderPrecioProducts();
+}
+function addVarRow(pid, concepto){
+  const p = state.products.find(x=>x.id===pid);
+  const vid = p.nextVarId++;
+  p.variable.push({id:vid, concepto:concepto||'', monto:0});
+  renderVarProducts();
+}
+function removeVarRow(pid, vid){
+  const p = state.products.find(x=>x.id===pid);
+  p.variable = p.variable.filter(r=>r.id!==vid);
+  renderVarProducts();
+  updateAllProductsDerived();
+}
+function renderVarProducts(){
+  const cont = document.getElementById('productsVarList');
+  if(state.products.length===0){
+    cont.innerHTML = `<div class="empty-msg">Agregá tu primer producto para empezar a cargar sus costos variables.</div>`;
+    return;
+  }
+  cont.innerHTML = state.products.map(p=>`
+    <div class="product-card">
+      <div class="p-head">
+        <input type="text" value="${escapeHtml(p.nombre)}" oninput="state.products.find(x=>x.id===${p.id}).nombre=this.value; syncProductNames();">
+        <button class="remove-product" onclick="removeProduct(${p.id})">Quitar producto</button>
+      </div>
+      <div class="chips">
+        ${VAR_SUGGESTIONS.map(s=>`<button type="button" class="chip" onclick="addVarRow(${p.id},'${s.replace(/'/g,"\\'")}')">+ ${s}</button>`).join('')}
+      </div>
+      <table class="row-table">
+        <thead><tr><th>Insumo / costo variable</th><th class="amt-col">Monto por unidad</th><th class="del-col"></th></tr></thead>
+        <tbody>
+        ${p.variable.map(r=>`
+          <tr>
+            <td><input type="text" value="${escapeHtml(r.concepto)}" oninput="getVar(${p.id},${r.id}).concepto=this.value"></td>
+            <td class="amt-col"><input type="number" value="${r.monto}" oninput="getVar(${p.id},${r.id}).monto=parseFloat(this.value)||0; updateVarSubtotal(${p.id});"></td>
+            <td class="del-col"><button class="del-btn" onclick="removeVarRow(${p.id},${r.id})">×</button></td>
+          </tr>`).join('') || `<tr><td colspan="3" style="padding:10px 0;"><div class="empty-msg">Sin insumos cargados.</div></td></tr>`}
+        </tbody>
+      </table>
+      <button class="add-row-btn" onclick="addVarRow(${p.id})">+ Agregar insumo</button>
+      <div class="subtotal-line">
+        <span>Costo variable por unidad</span>
+        <b id="varsub-${p.id}">${fmt2(productVarTotal(p))}</b>
+      </div>
+    </div>
+  `).join('');
+}
+function getVar(pid, vid){ return state.products.find(x=>x.id===pid).variable.find(r=>r.id===vid); }
+function updateVarSubtotal(pid){
+  const p = state.products.find(x=>x.id===pid);
+  const el = document.getElementById('varsub-'+pid);
+  if(el) el.textContent = fmt2(productVarTotal(p));
+  updateAllProductsDerived();
+}
+function syncProductNames(){
+  document.querySelectorAll('[data-pname]').forEach(el=>{
+    const pid = Number(el.dataset.pname);
+    const p = state.products.find(x=>x.id===pid);
+    if(p) el.textContent = p.nombre;
+  });
+}
+
+/* ---------- PRECIO TAB ---------- */
+function renderPrecioProducts(){
+  const cont = document.getElementById('productsPrecioList');
+  if(state.products.length===0){
+    cont.innerHTML = `<div class="empty-msg">Todavía no hay productos. Agregalos en la pestaña "Costos variables".</div>`;
+    return;
+  }
+  cont.innerHTML = state.products.map(p=>{
+    if(p.precio===undefined){
+      const uc = productUnitCost(p);
+      p.precio = p.margen<100 ? uc/(1-p.margen/100) : uc;
+    }
+    return `
+    <div class="price-card" id="pricecard-${p.id}">
+      <h3 data-pname="${p.id}">${escapeHtml(p.nombre)}</h3>
+      <div class="price-grid">
+        <div class="field">
+          <label>Unidades / mes</label>
+          <input type="number" value="${p.unidades}" oninput="state.products.find(x=>x.id===${p.id}).unidades=parseFloat(this.value)||0; updateAllProductsDerived();">
+        </div>
+        <div class="field readout">
+          <label>Costo variable u.</label>
+          <input type="text" disabled id="pv-var-${p.id}" value="${fmt2(productVarTotal(p))}">
+        </div>
+        <div class="field readout">
+          <label>Fijo prorrateado u.</label>
+          <input type="text" disabled id="pv-fijo-${p.id}" value="${fmt2(p.unidades>0?productFixedShare(p)/p.unidades:0)}">
+        </div>
+        <div class="field readout">
+          <label>Costo total u.</label>
+          <input type="text" disabled id="pv-cost-${p.id}" value="${fmt2(productUnitCost(p))}">
+        </div>
+        <div class="field">
+          <label>Margen deseado %</label>
+          <input type="number" id="pv-margen-${p.id}" value="${p.margen}" oninput="onMarginInput(${p.id}, this.value)">
+        </div>
+        <div class="field highlight">
+          <label>Precio de venta</label>
+          <input type="number" id="pv-precio-${p.id}" value="${Number(p.precio).toFixed(2)}" oninput="onPriceInput(${p.id}, this.value)">
+        </div>
+        <div class="field readout">
+          <label>Ganancia / unidad</label>
+          <input type="text" disabled id="pv-gan-${p.id}" value="${fmt2(p.precio-productUnitCost(p))}">
+        </div>
+      </div>
+      <div class="bar-chart" id="pv-bar-${p.id}"></div>
+      <div class="bar-legend">
+        <span><i class="dot var"></i>Costo variable</span>
+        <span><i class="dot fijo"></i>Costo fijo</span>
+        <span><i class="dot gan"></i>Ganancia</span>
+      </div>
+      <div id="pv-warn-${p.id}"></div>
+    </div>`;
+  }).join('');
+  state.products.forEach(p=>updateBar(p.id));
+}
+function onMarginInput(pid, val){
+  const p = state.products.find(x=>x.id===pid);
+  p.margen = parseFloat(val)||0;
+  const uc = productUnitCost(p);
+  const m = Math.min(p.margen, 95);
+  p.precio = uc/(1-m/100);
+  document.getElementById('pv-precio-'+pid).value = p.precio.toFixed(2);
+  refreshProductNumbers(pid);
+}
+function onPriceInput(pid, val){
+  const p = state.products.find(x=>x.id===pid);
+  p.precio = parseFloat(val)||0;
+  const uc = productUnitCost(p);
+  p.margen = p.precio>0 ? ((p.precio-uc)/p.precio*100) : 0;
+  const mEl = document.getElementById('pv-margen-'+pid);
+  if(mEl) mEl.value = p.margen.toFixed(1);
+  refreshProductNumbers(pid);
+}
+function refreshProductNumbers(pid){
+  const p = state.products.find(x=>x.id===pid);
+  if(!p || !document.getElementById('pricecard-'+pid)) return;
+  const varCost = productVarTotal(p);
+  const share = productFixedShare(p);
+  const fixedPerUnit = p.unidades>0 ? share/p.unidades : 0;
+  const unitCost = varCost + fixedPerUnit;
+  document.getElementById('pv-var-'+pid).value = fmt2(varCost);
+  document.getElementById('pv-fijo-'+pid).value = fmt2(fixedPerUnit);
+  document.getElementById('pv-cost-'+pid).value = fmt2(unitCost);
+  document.getElementById('pv-gan-'+pid).value = fmt2(p.precio-unitCost);
+  updateBar(pid);
+}
+function updateBar(pid){
+  const p = state.products.find(x=>x.id===pid);
+  const bar = document.getElementById('pv-bar-'+pid);
+  const warnBox = document.getElementById('pv-warn-'+pid);
+  if(!bar) return;
+  const varCost = productVarTotal(p);
+  const share = productFixedShare(p);
+  const fixedPerUnit = p.unidades>0 ? share/p.unidades : 0;
+  const price = Number(p.precio)||0;
+  const gan = price - varCost - fixedPerUnit;
+  if(price<=0 || (varCost+fixedPerUnit)<=0){ bar.innerHTML=''; if(warnBox) warnBox.innerHTML=''; return; }
+  const pv = Math.max(0, Math.min(100, varCost/price*100));
+  const pf = Math.max(0, Math.min(100-pv, fixedPerUnit/price*100));
+  const pg = Math.max(0, 100-pv-pf);
+  bar.innerHTML = `
+    <div class="bar-seg var" style="width:${pv}%">${pv>10?Math.round(pv)+'%':''}</div>
+    <div class="bar-seg fijo" style="width:${pf}%">${pf>10?Math.round(pf)+'%':''}</div>
+    <div class="bar-seg gan" style="width:${pg}%">${pg>10?Math.round(pg)+'%':''}</div>`;
+  if(warnBox){
+    if(gan<0){
+      warnBox.innerHTML = `<div class="warn">⚠ A este precio estás perdiendo plata en cada unidad: no cubre ni el costo variable + fijo prorrateado.</div>`;
+    } else if(p.unidades<=0){
+      warnBox.innerHTML = `<div class="warn">⚠ Ingresá cuántas unidades pensás vender por mes para repartir los costos fijos.</div>`;
+    } else {
+      warnBox.innerHTML = '';
+    }
+  }
+}
+function updateAllProductsDerived(){
+  state.products.forEach(p=>refreshProductNumbers(p.id));
+  if(currentTab==='resumen') renderSummary();
+  if(currentTab==='ajuste') renderAjuste();
+}
+
+/* ---------- AJUSTE TAB (simulador de impacto) ---------- */
+function resetAjuste(){
+  state.fixed.forEach(r=> r.nuevo = r.monto);
+  state.products.forEach(p=> p.variable.forEach(r=> r.nuevo = r.monto));
+  renderAjuste();
+}
+function weightedImpact(items){
+  const total = items.reduce((s,r)=>s+(Number(r.monto)||0),0);
+  if(total<=0) return {rows:[], overall:0, total:0};
+  const rows = items.map(r=>{
+    const monto = Number(r.monto)||0;
+    const nuevo = r.nuevo===undefined ? monto : Number(r.nuevo);
+    const cambio = monto>0 ? (nuevo-monto)/monto*100 : 0;
+    const incidencia = monto/total*100;
+    const impacto = (nuevo-monto)/total*100;
+    return {id:r.id, concepto:r.concepto||'(sin nombre)', monto, nuevo, cambio, incidencia, impacto};
+  });
+  const overall = rows.reduce((s,r)=>s+r.impacto,0);
+  return {rows, overall, total};
+}
+function impactBadge(p){
+  const abs = Math.abs(p);
+  if(abs < 5) return `<span class="badge ok">Impacto bajo</span>`;
+  if(abs < 15) return `<span class="badge warn2">Impacto medio</span>`;
+  return `<span class="badge bad">Impacto alto</span>`;
+}
+function renderAjuste(){
+  const cont = document.getElementById('ajusteContent');
+  if(state.fixed.length===0 && state.products.length===0){
+    cont.innerHTML = `<div class="empty-msg">Cargá primero tus costos fijos y variables para poder simular cambios.</div>`;
+    return;
+  }
+  state.fixed.forEach(r=>{ if(r.nuevo===undefined) r.nuevo = r.monto; });
+  state.products.forEach(p=> p.variable.forEach(r=>{ if(r.nuevo===undefined) r.nuevo = r.monto; }));
+
+  const fixedCalc = weightedImpact(state.fixed);
+
+  let html = `
+    <div class="ajuste-block">
+      <h3>Costos fijos</h3>
+      <p class="mini">Cargá al lado de cada uno lo que pagás ahora.</p>
+      ${fixedCalc.rows.length ? `
+      <table class="adj-table">
+        <thead><tr><th>Concepto</th><th>Pagaba</th><th>Pago ahora</th><th>Cambió</th><th>Incidencia</th><th>Impacto</th></tr></thead>
+        <tbody>
+        ${fixedCalc.rows.map(r=>`
+          <tr>
+            <td>${escapeHtml(r.concepto)}</td>
+            <td class="mono">${fmt(r.monto)}</td>
+            <td><input type="number" value="${r.nuevo}" oninput="setFixedNuevo(${r.id}, this.value)"></td>
+            <td>${pct(r.cambio)}</td>
+            <td>${r.incidencia.toFixed(1)}%</td>
+            <td>${pct(r.impacto)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+      <div class="adj-result"><span class="l">Tus costos fijos cambiaron aprox.</span><span class="v" id="fixedImpactTotal">${pct(fixedCalc.overall)}</span></div>
+      ` : `<div class="empty-msg">Sin costos fijos cargados.</div>`}
+    </div>
+  `;
+
+  state.products.forEach(p=>{
+    const calc = weightedImpact(p.variable);
+    html += `
+    <div class="ajuste-block">
+      <h3 class="v">Costos variables — ${escapeHtml(p.nombre)}</h3>
+      <p class="mini">Insumos de este producto.</p>
+      ${calc.rows.length ? `
+      <table class="adj-table">
+        <thead><tr><th>Concepto</th><th>Pagaba</th><th>Pago ahora</th><th>Cambió</th><th>Incidencia</th><th>Impacto</th></tr></thead>
+        <tbody>
+        ${calc.rows.map(r=>`
+          <tr>
+            <td>${escapeHtml(r.concepto)}</td>
+            <td class="mono">${fmt2(r.monto)}</td>
+            <td><input type="number" value="${r.nuevo}" oninput="setVarNuevo(${p.id},${r.id}, this.value)"></td>
+            <td>${pct(r.cambio)}</td>
+            <td>${r.incidencia.toFixed(1)}%</td>
+            <td>${pct(r.impacto)}</td>
+          </tr>`).join('')}
+        </tbody>
+      </table>
+      <div class="adj-result"><span class="l">Este costo variable cambió aprox.</span><span class="v" id="varImpactTotal-${p.id}">${pct(calc.overall)}</span></div>
+      ` : `<div class="empty-msg">Sin insumos cargados para este producto.</div>`}
+    </div>`;
+  });
+
+  if(state.products.length>0){
+    html += `<div class="impact-summary"><h3 style="font-family:'Poppins'; font-weight:600; font-size:16px; margin:0 0 4px;">¿Cuánto ajustar el precio de cada producto?</h3>
+      <p class="mini" style="margin-bottom:6px;">Combina el cambio en costos fijos y variables, según cuánto pesa cada uno en el costo de ese producto.</p>`;
+    state.products.forEach(p=>{
+      const varCalc = weightedImpact(p.variable);
+      const varCost = productVarTotal(p);
+      const fixedPerUnit = p.unidades>0 ? productFixedShare(p)/p.unidades : 0;
+      const unitCost = varCost + fixedPerUnit;
+      let sugerido = 0;
+      if(unitCost>0){
+        const wVar = varCost/unitCost;
+        const wFijo = fixedPerUnit/unitCost;
+        sugerido = wVar*varCalc.overall + wFijo*fixedCalc.overall;
+      }
+      html += `<div class="impact-row"><span class="pname">${escapeHtml(p.nombre)}</span><span style="display:flex; align-items:center; gap:12px;"><span class="pct">${pct(sugerido)}</span>${impactBadge(sugerido)}</span></div>`;
+    });
+    html += `</div>`;
+  }
+
+  cont.innerHTML = html;
+}
+function setFixedNuevo(id, val){
+  state.fixed.find(x=>x.id===id).nuevo = parseFloat(val)||0;
+  renderAjuste();
+}
+function setVarNuevo(pid, id, val){
+  state.products.find(x=>x.id===pid).variable.find(r=>r.id===id).nuevo = parseFloat(val)||0;
+  renderAjuste();
+}
+
+/* ---------- RESUMEN ---------- */
+function renderSummary(){
+  const cont = document.getElementById('summaryContent');
+  if(state.products.length===0){
+    cont.innerHTML = `<div class="empty-msg">Cargá al menos un producto para ver el resumen.</div>`;
+    return;
+  }
+  let totalGanMensual = 0;
+  const rows = state.products.map(p=>{
+    const unitCost = productUnitCost(p);
+    const be = productBreakeven(p);
+    const ganUnit = (p.precio||0) - unitCost;
+    const ganMensual = ganUnit * (p.unidades||0);
+    totalGanMensual += ganMensual;
+    const u = p.unidades||0;
+    let badge, fillColor, fillPct;
+    if(be===Infinity){ badge = `<span class="badge bad">Precio insuficiente</span>`; fillColor='var(--red)'; fillPct=0; }
+    else if(u < be){ badge = `<span class="badge bad">Bajo equilibrio</span>`; fillColor='var(--red)'; fillPct = be>0?Math.min(100,u/be*100):0; }
+    else { badge = `<span class="badge ok">Por encima del equilibrio</span>`; fillColor='var(--green)'; fillPct=100; }
+    return `<tr>
+      <td>${escapeHtml(p.nombre)}</td>
+      <td class="mono">${fmt2(unitCost)}</td>
+      <td class="mono">${fmt2(p.precio||0)}</td>
+      <td class="mono">${(p.margen||0).toFixed(1)}%</td>
+      <td class="mono">${be===Infinity?'—':Math.ceil(be)}</td>
+      <td class="mono">${u}</td>
+      <td><div class="equil-bar"><div class="equil-fill" style="width:${fillPct}%; background:${fillColor}"></div></div></td>
+      <td>${badge}</td>
+    </tr>`;
+  }).join('');
+
+  cont.innerHTML = `
+    <table class="summary-table">
+      <thead><tr>
+        <th>Producto</th><th>Costo u.</th><th>Precio</th><th>Margen</th>
+        <th>P. equilibrio (u.)</th><th>Estimás vender</th><th>Progreso</th><th>Estado</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <div class="grand-totals">
+      <div class="gt-card f1"><div class="l">Costos fijos / mes</div><div class="v">${fmt(fixedTotal())}</div></div>
+      <div class="gt-card f2"><div class="l">Ganancia mensual proyectada</div><div class="v">${fmt(totalGanMensual)}</div></div>
+    </div>
+  `;
+}
+
+/* ---------- EXPORT ---------- */
+function exportCSV(){
+  let csv = 'Producto;Costo unitario;Precio;Margen %;Punto de equilibrio (u.);Unidades estimadas;Ganancia mensual\\n';
+  state.products.forEach(p=>{
+    const unitCost = productUnitCost(p);
+    const be = productBreakeven(p);
+    const ganMensual = ((p.precio||0)-unitCost)*(p.unidades||0);
+    csv += `${p.nombre};${unitCost.toFixed(2)};${(p.precio||0).toFixed(2)};${(p.margen||0).toFixed(1)};${be===Infinity?'N/D':Math.ceil(be)};${p.unidades||0};${ganMensual.toFixed(2)}\\n`;
+  });
+  csv += `\\nTotal costos fijos;${fixedTotal().toFixed(2)}\\n`;
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'resumen-costos.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+/* ---------- UTIL ---------- */
+function escapeHtml(s){
+  return String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+/* ---------- INIT ---------- */
+function render(){
+  renderTabsNav();
+  document.querySelectorAll('.tab-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+currentTab).classList.add('active');
+  renderFixedChips();
+  renderFixed();
+  renderVarProducts();
+  renderPrecioProducts();
+  if(currentTab==='resumen') renderSummary();
+  if(currentTab==='ajuste') renderAjuste();
+}
+loadExample();
+</script>
+</body>
+</html>
