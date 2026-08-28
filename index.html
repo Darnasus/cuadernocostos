@@ -423,6 +423,9 @@ footer.credit{text-align:center; font-size:12px; color:var(--ink-soft); margin-t
         <span class="label">Total costos fijos / mes</span>
         <span class="value" id="fixedTotalDisplay">$ 0</span>
       </div>
+      <div class="cta-row">
+        <button class="btn-primary" onclick="goTab('variables')">Continuar a costos variables →</button>
+      </div>
     </section>
 
     <section class="tab-panel" id="panel-variables">
@@ -434,6 +437,9 @@ footer.credit{text-align:center; font-size:12px; color:var(--ink-soft); margin-t
 
       <button class="add-product-btn" onclick="addProduct()">+ Agregar producto</button>
       <div id="productsVarList"></div>
+      <div class="cta-row">
+        <button class="btn-primary" onclick="goTab('precio')">Continuar a precio y margen →</button>
+      </div>
     </section>
 
     <section class="tab-panel" id="panel-precio">
@@ -443,6 +449,9 @@ footer.credit{text-align:center; font-size:12px; color:var(--ink-soft); margin-t
       <p class="section-sub">Estimá cuánto pensás vender de cada producto para repartir los costos fijos, y definí tu margen.</p>
       <div class="info-box" id="info-precio">El costo fijo se reparte entre productos según cuánto estimás vender de cada uno. Si vendés menos unidades de las que pusiste acá, cada unidad "carga" con más costo fijo del real — por eso conviene ser realista con la estimación.</div>
       <div id="productsPrecioList"></div>
+      <div class="cta-row">
+        <button class="btn-primary" onclick="goTab('ajuste')">Continuar a ¿subieron tus costos? →</button>
+      </div>
     </section>
 
     <section class="tab-panel" id="panel-ajuste">
@@ -453,6 +462,9 @@ footer.credit{text-align:center; font-size:12px; color:var(--ink-soft); margin-t
       <div class="info-box" id="info-ajuste">Cargá al lado de cada costo lo que pagás <b>ahora</b>. La herramienta calcula qué porcentaje representa cada costo sobre el total y, con eso, cuánto tendrías que subir el precio de cada producto para mantener la misma ganancia.</div>
       <button class="reset-sim" onclick="resetAjuste()">↺ Reiniciar simulación</button>
       <div id="ajusteContent"></div>
+      <div class="cta-row">
+        <button class="btn-primary" onclick="goTab('resumen')">Ver el resumen final →</button>
+      </div>
     </section>
 
     <section class="tab-panel" id="panel-resumen">
@@ -464,6 +476,9 @@ footer.credit{text-align:center; font-size:12px; color:var(--ink-soft); margin-t
       <div id="summaryContent"></div>
       <button class="export-btn" onclick="exportPDF()">⬇ Descargar resumen (PDF)</button>
       <div class="privacy-note">🔒 Los datos que cargás quedan solo en esta pestaña de tu navegador — no se guardan ni se envían a ningún lado. Al cerrar o recargar la página, se pierden.</div>
+      <div class="cta-row">
+        <button class="btn-ghost" onclick="goTab('inicio')">↺ Volver al inicio</button>
+      </div>
     </section>
 
   </main>
@@ -565,6 +580,7 @@ function goTab(id){
   renderTabsNav();
   if(id==='resumen') renderSummary();
   if(id==='ajuste') renderAjuste();
+  document.querySelector('header.top').scrollIntoView({behavior:'smooth', block:'start'});
 }
 
 /* ---------- FIXED ROWS ---------- */
